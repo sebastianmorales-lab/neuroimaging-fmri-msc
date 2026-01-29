@@ -1,0 +1,5 @@
+# Subir solo archivos .m
+*
+!*.m
+!*/
+!.gitignore
