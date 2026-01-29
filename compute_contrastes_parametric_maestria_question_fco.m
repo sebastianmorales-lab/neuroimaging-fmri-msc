@@ -1,0 +1,111 @@
+function [output] = compute_contrastes_parametric_maestria_question(choice_individual_blocks, outcomes_individual_b, outcomes_individual_m, repMB, repIndB, repIndM, posicionMB, posicionIndB, posicionIndM)
+
+CONTRASTE_LABEL = 1;
+CONTRASTE_VALUES = 2;
+
+n_zeros = 6;
+n_sessions = 4;
+
+zeros_block = zeros(1, n_zeros);
+
+contrastes = {
+   {'comp_onset'     [1  0  0  0  0  0  0  0  0  0  0  0  0]}                            %  1
+   {'comp_rival'     [0  1  0  0  0  0  0  0  0  0  0  0  0]}                            %  2
+   {'comp_pago'      [0  0  1  0  0  0  0  0  0  0  0  0  0]}                            %  3
+   {'indv_onset'     [0  0  0  1  0  0  0  0  0  0  0  0  0]}                            %  4
+   {'indv_rival'     [0  0  0  0  1  0  0  0  0  0  0  0  0]}                            %  5
+   {'indv_pago'      [0  0  0  0  0  1  0  0  0  0  0  0  0]}                            %  6
+   {'pregunta'       [0  0  0  0  0  0  1  0  0  0  0  0  0]}                            %  7
+   {'cJB>cJM'        [0  0  0  0  0  0  0  1  1 -1 -1  0  0]}                            %  8
+   {'cojB>cojM'      [0  0  0  0  0  0  0  1 -1  1 -1  0  0]}                            %  9
+   {'BB>BM'          [0  0  0  0  0  0  0  1 -1  0  0  0  0]}                            %  10
+   {'BB>MB'          [0  0  0  0  0  0  0  1  0 -1  0  0  0]}                            %  11
+   {'BB>MM'          [0  0  0  0  0  0  0  1  0  0 -1  0  0]}                            %  12
+   {'BM>MB'          [0  0  0  0  0  0  0  0  1 -1  0  0  0]}                            %  13
+   {'BM>MM'          [0  0  0  0  0  0  0  0  1  0 -1  0  0]}                            %  14
+   {'MB>MM'          [0  0  0  0  0  0  0  0  0  1 -1  0  0]}                            %  15
+   {'interaccion'    [0  0  0  0  0  0  0  1 -1 -1  1  0  0]}                            %  16
+   {'BB'             [0  0  0  0  0  0  0  1  0  0  0  0  0]}                            %  17
+   {'BM'             [0  0  0  0  0  0  0  0  1  0  0  0  0]}                            %  18
+   {'MB'             [0  0  0  0  0  0  0  0  0  1  0  0  0]}                            %  19
+   {'MM'             [0  0  0  0  0  0  0  0  0  0  1  0  0]}                            %  20
+ 
+   
+};
+
+filtered = {};
+
+for i_contraste =1:length(contrastes)
+  contraste_values = [];
+
+  for i_session =1:n_sessions
+%     individuals   = height(choice_individual_blocks{i_session});
+%     individuals_b = height(outcomes_individual_b{i_session});
+%     individuals_m = height(outcomes_individual_m{i_session});
+% 
+    contrast_block = contrastes{i_contraste}{CONTRASTE_VALUES};
+    
+    if posicionMB(i_session)~=0
+        contrast_block(posicionMB(i_session)) = [];
+    end
+    
+    if posicionIndB(i_session) ~= 0
+       contrast_block(posicionIndB(i_session)) = [];
+    end
+
+    if posicionIndM(i_session) ~= 0
+        contrast_block(posicionIndM(i_session)) = [];
+     end
+% 
+%     if individuals
+%       contrast_block(end+1) = 0;
+%     end
+% 
+%     if individuals_b
+%       contrast_block(end+1) = 0;
+%     end
+% 
+%     if individuals_m
+%       contrast_block(end+1) = 0;
+%     end
+  if i_contraste >= 1 && i_contraste <= 7
+    if sum(abs(contrast_block))~=1
+        contrast_block(:)=0;
+    end
+  end
+
+  if i_contraste >=8 && i_contraste <= 9
+    if sum(abs(contrast_block))~=4
+        contrast_block(:)=0;
+    end
+  end
+  
+  if i_contraste >= 10 && i_contraste <= 15
+    if sum(abs(contrast_block))~=2
+        contrast_block(:)=0;
+    end
+  end
+  
+  if i_contraste == 16
+    if sum(abs(contrast_block))~=4
+        contrast_block(:)=0;
+    end
+  end
+  
+    
+    contraste_values = [contraste_values contrast_block zeros_block];
+  end
+
+  name    = contrastes{i_contraste}{CONTRASTE_LABEL};
+  
+  if sum(abs(contraste_values))==0
+      continue
+  end
+  
+  filtered{end+1} = {name contraste_values};
+end
+
+output = {filtered contrastes};
+
+
+

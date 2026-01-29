@@ -1,0 +1,29 @@
+#!/bin/sh
+target="$1"
+
+if [ -z "$target" ]; then
+  echo "no selecciono ninguna carpeta"
+  exit 1
+fi
+
+tmp="$target/tmp"
+mkdir "$tmp"
+mv "$target"/con*nii "$tmp"
+echo
+
+for file in "$tmp"/*nii; do
+  echo "------------------"
+  echo "$file"
+
+  contrast=$(grep -o -a -E "Contrast[a-zA-Z0-9_:<> ]+" "$file"|cut -d ':' -f 2|xargs)
+  echo "$contrast"
+  echo
+
+  contrast_number=$(head -n 31 compute_contrastes_parametric_maestria.m|tail -n 20|grep -n "$contrast"|cut -d ':' -f 1)
+  number=$(printf "%0.4d" "$contrast_number")
+  new_name="con_$number.nii"
+  dest="$target"/"$new_name"
+  echo "-> $dest"
+  mv "$file" "$dest"
+done
+rmdir "$tmp"
