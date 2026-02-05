@@ -1,4 +1,7 @@
- output_base = "/media/sebastian/Seagate Portable Drive/Expansion/maestria_task/FMRI/news/Second_level_parametric_questionnaries/outputs";
+%-----------------------------------------------------------
+%Second Level con Sexo y Edad como covariables de no interes
+%-----------------------------------------------------------
+output_base = "/media/sebastian/Seagate Portable Drive/Expansion/maestria_task/FMRI/news/Second_level_parametric_questionnaries/outputs";
 %output_base = "D:\Expansion\maestria_task\FMRI\Second_level_parametric_questionnaries\outputs3";
  input_base  = "/media/sebastian/Seagate Portable Drive/Expansion/maestria_task/FMRI/news/Second_level_parametric_questionnaries/inputs";
 %input_base  = "D:\Expansion\maestria_task\FMRI\Second_level_parametric_questionnaries\inputs";
@@ -46,7 +49,10 @@ for i = desde:hasta
 
             disp("1*****");
             [matlabbatch] = one_group_t_test_job_hotfix_fco(inputs, kindex, output, cuestionario, nombre_cuestionario);
-            spm_jobman('serial', matlabbatch);  
+            spm_jobman('serial', matlabbatch);
+            disp('guardando matlabbatch...')
+            batch_filename = fullfile(output, 'matlabbatch.mat');
+            save(batch_filename, 'matlabbatch');
             disp("2*****");
         end
     end
